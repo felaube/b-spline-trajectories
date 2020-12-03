@@ -1,0 +1,1 @@
+atan(((u^2*('diff(v,t,1))-u*('diff(u,t,1))*v)*sqrt(w^2+v^2+u^2))/((abs(u)*v^2+u^2*abs(u))*('diff(w,t,1))+(-abs(u)*v*('diff(v,t,1))-u*abs(u)*('diff(u,t,1)))*w+g*abs(u)*v^2+g*u^2*abs(u)))
