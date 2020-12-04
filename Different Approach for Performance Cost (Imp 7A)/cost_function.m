@@ -132,7 +132,7 @@ function trajectory_cost = cost_function(x, C_u, C_v, C_w, ...
     % The script deviates from the paper when evaluating the 
     % vehicle_constraints_penalty. The function proposed in the paper
     % is A_p * exp(-alpha_p*performance_margin)/performance_margin
-    vehicle_constraints_penalty = A_p * exp(-alpha_p*performance_margin)/performance_margin;
+    vehicle_constraints_penalty = A_p * exp(-alpha_p*performance_margin)./performance_margin;
     
     vehicle_constraints_penalty = sum(vehicle_constraints_penalty);
     
