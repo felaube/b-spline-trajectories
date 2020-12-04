@@ -51,6 +51,7 @@ function [x, y, z, u, v, w, ...
 
     T = D + mass*V_dot(1:end) + mass*g*sin(gamma(2:end));
     
+    %% Two Dimensional Position
     %{
     figure(1)
     subplot(2,1,1);
@@ -73,14 +74,16 @@ function [x, y, z, u, v, w, ...
     axis equal
     xlabel("x")
     ylabel("z")
-
-    %{
+    
     figure(3)
     plot(y, z, 'color','k','marker','.','markersize',16)
     xlabel("y")
     ylabel("z")
+    
     %}
-
+    
+    %% Two Dimensional velocities
+    
     figure(4)
     subplot(3,1,1);
     plot(t_array, u, 'color','k','marker','.','markersize',16)
@@ -103,13 +106,46 @@ function [x, y, z, u, v, w, ...
     ylabel("w")
 
    
-    
     figure(7)
     plot(t_array, V, 'color','k','marker','.','markersize',16)
     xlabel("t")
     ylabel("V")
     
+    %% Two Dimensional acceleration
+    
+    figure(8)
+    subplot(3,1,1);
+    plot(t_array, u_dot, 'color','k','marker','.','markersize',16)
+    grid on
+    xlabel("t")
+    ylabel("$\dot{u}$",'interpreter','latex')
+
+    %figure(9)
+    subplot(3,1,2);
+    plot(t_array, v_dot, 'color','k','marker','.','markersize',16)
+    grid on
+    xlabel("t")
+    ylabel("$\dot{v}$",'interpreter','latex')
+
+    %figure(10)
+    subplot(3,1,3);
+    plot(t_array, w_dot, 'color','k','marker','.','markersize',16)
+    grid on
+    xlabel("t")
+    ylabel("$\dot{w}$",'interpreter','latex')
+
+   
+    figure(11)
+    plot(t_array, sqrt(u_dot.^2 + v_dot.^2 + w_dot.^2), 'color','k','marker','.','markersize',16)
+    xlabel("t")
+    ylabel("$\dot{V}$",'interpreter','latex')
+    
+    %figure(62)
+    %plot(t_array(2:end), V_dot, 'color','k','marker','.','markersize',16)
+    %xlabel("t")
+    %ylabel("$\dot{V}$",'interpreter','latex')
  %}
+ 
     % Convert color code to 1-by-3 RGB array (0~1 each)
     str = '#D9FFFF';
     color = sscanf(str(2:end),'%2x%2x%2x',[1 3])/255;
@@ -117,7 +153,7 @@ function [x, y, z, u, v, w, ...
     str = '#fbd9d3';
     prev_color = sscanf(str(2:end),'%2x%2x%2x',[1 3])/255;
     
-    figure(8)
+    figure(12)
     plot3(x, y, z,'-o','Color','b','MarkerSize',10, 'MarkerFaceColor', color)
     hold on
     plot3(past_x, past_y, past_z,'-o','Color','r','MarkerSize',10, 'MarkerFaceColor', prev_color)
@@ -131,14 +167,14 @@ function [x, y, z, u, v, w, ...
     hold off
 
     %{
-    figure(9)
+    figure(13)
     plot(t_array, z, 'color','k','marker','.','markersize',16)
     xlabel("t")
     ylabel("z")
     %}
     
     %{
-    figure(10)
+    figure(14)
     %plot(t_array, [1 1 n], 'color','k','marker','.','markersize',16)
     plot(t_array, [1 n], 'color','k','marker','.','markersize',16)
     xlabel("t")
@@ -146,7 +182,7 @@ function [x, y, z, u, v, w, ...
     %}
     
     %%{
-    figure(11)
+    figure(15)
     %plot(t_array(3:end), T, 'color','k','marker','.','markersize',16)
     plot(t_array(2:end), T, 'color','k','marker','.','markersize',16)
     xlabel("t")
