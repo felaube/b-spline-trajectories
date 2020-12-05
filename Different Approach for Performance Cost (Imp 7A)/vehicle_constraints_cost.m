@@ -2,11 +2,10 @@ function performance_margin = vehicle_constraints_cost(gamma, gamma_dot, gamma_d
                                                        psi_dot, V, V_dot, ...
                                                        g, rho, e, S, b, mass, AR, k, C_D_0, ...
                                                        T, T_min, T_max, phi, n)
-    %{
-        Calculate the performance margin, required for the 
-        vehicle constraints penalty function, which is calculated
-        in the objective function.
-    %}
+        
+	% Calculate the performance margin, required for the 
+    % vehicle constraints penalty function, which is calculated
+    % in the objective function.
 
     % performance_margin = 1.5*(max(gamma)/gamma_max)^2 + 1.5*(max(T)/T_max);
     

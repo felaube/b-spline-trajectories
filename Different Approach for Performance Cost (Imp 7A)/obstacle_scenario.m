@@ -1,12 +1,11 @@
 function [x_obs, y_obs, z_obs, R_obs, u_obs, v_obs, w_obs, num_obs] = obstacle_scenario(scenario_id)
     
-    %{
-        This function was written in order to store different scenario 
-        for obstacles positioning. Given scenario_id, it returns
-        corresponding initial positioning (x, y, z), radius (R),
-        and velocities (u, v, w) of obstacles. In addition, it also returns
-        the number of obstacles in the scenario.
-    %}
+    % This function was written in order to store different scenario 
+    % for obstacles positioning. Given scenario_id, it returns
+    % corresponding initial positioning (x, y, z), radius (R),
+    % and velocities (u, v, w) of obstacles. In addition, it also returns
+    % the number of obstacles in the scenario.
+    
     switch scenario_id
         case 0
             x_obs = [];

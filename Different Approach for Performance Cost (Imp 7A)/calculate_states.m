@@ -2,13 +2,13 @@ function [u, v, w, u_dot, v_dot, w_dot] = calculate_states(phi, T, n, ...
                                                            gamma, psi, ...
                                                            V, D, ...
                                                            mass, g)
-    %{
-        Calculate speed and acceleration in each axis, given the current
-        bank angle [rad], thrust [N], load factor [-], flight path angle
-        (which in this case is equal to the angle of attack) [rad] and
-        the heading angle [rad]. The total speed [m/s], drag [N], vehicle 
-        mass [kg] and acceleration of gravity [m/s²] are also needed.
-    %}
+
+    % Calculate speed and acceleration in each axis, given the current
+	% bank angle [rad], thrust [N], load factor [-], flight path angle
+    % (which in this case is equal to the angle of attack) [rad] and
+    % the heading angle [rad]. The total speed [m/s], drag [N], vehicle 
+    % mass [kg] and acceleration of gravity [m/s²] are also needed.
+
     u = V*cos(gamma)*cos(psi);
     v = V*cos(gamma)*sin(psi);
     w = V*sin(gamma);

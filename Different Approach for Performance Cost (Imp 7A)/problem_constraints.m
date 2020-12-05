@@ -6,11 +6,10 @@ function [c, ceq] = problem_constraints(x, C_u, C_v, C_w, x_0, y_0, z_0, ...
                                         x_d, y_d, z_d, psi_d, gamma_d, ...
                                         g, rho, e, S, b, T_max, mass, AR, k, C_D_0, T_min, ...
                                         safe_distance, num_set)
+    
+    % Performs the calculation of nonlcon, which are the non-linear
+    % constraints, as defined for the fmincon function.
 
-    %{
-        Performs the calculation of nonlcon, which are the non-linear
-        constraints, as defined for the fmincon function.
-    %}
     if num_set == 3
         % Configuration used in the first optimization process 
         C_u_ = [C_u(1:3); x(1:4)];

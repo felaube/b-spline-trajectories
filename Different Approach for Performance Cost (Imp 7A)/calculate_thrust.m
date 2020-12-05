@@ -3,13 +3,12 @@ function T = calculate_thrust(u, v, w, ...
                               n, ...
                               mass, g, rho, S, C_D_0, k)
 
-    %{
-        Calculate thrust [N], given the speed [m/s] and 
-        acceleration [m/s²] in each axis. The acceleration of 
-        gravity [m/s²], the vehicle mass [kg], density of air [kg/m³],
-        reference area [m²] and the dimensionless parameters 
-        C_d_0 [-] and k [-] are also needed.
-    %}
+	% Calculate thrust [N], given the speed [m/s] and 
+    % acceleration [m/s²] in each axis. The acceleration of 
+    % gravity [m/s²], the vehicle mass [kg], density of air [kg/m³],
+    % reference area [m²] and the dimensionless parameters 
+    % C_d_0 [-] and k [-] are also needed.
+    
     V = sqrt(u^2 + v^2 + w^2);
 
     C_L = 2*n*mass*g/(rho*S*V^2);

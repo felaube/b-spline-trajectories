@@ -3,11 +3,10 @@ function distance = obstacle_distance(x_obs, y_obs, z_obs, R_obs, ...
                                       x_a, y_a, z_a, ...
                                       t_array, safe_distance)
 
-    %{
-        Calculate the distance from the obstacle to each waypoint of the
-        trajectory and returns the minimum distance. I.e. returns the 
-        distance between the obstacle and the closest trajectory point to it.
-    %}
+    % Calculate the distance from the obstacle to each waypoint of the
+    % trajectory and returns the minimum distance. I.e. returns the 
+    % distance between the obstacle and the closest trajectory point to it.
+    
 
     % Project future positions of the obstacle, 
     % based on its current velocity

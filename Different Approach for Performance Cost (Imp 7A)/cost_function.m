@@ -15,9 +15,8 @@ function trajectory_cost = cost_function(x, C_u, C_v, C_w, ...
                                          T_max, T_min, gamma_max, gamma_min, ...
                                          num_set)
 
-    %{
-        Calculate the trajectory cost (objective function).
-    %}                    
+    % Calculate trajectory cost (objective function).
+    
     if num_set == 3 
         % Configuration used in the first optimization process 
         C_u_ = [C_u(1:3); x(1:4)];

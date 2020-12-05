@@ -7,7 +7,8 @@ function plot_trajectory(x, y, z, u, v, w, ...
                          phi, n, T, t_array, ...
                          past_x, past_y, past_z, ...
                          m, x_obs, y_obs, z_obs, R_obs)
-    % Plot position, acceleration, jerk, angles, load factor, drag and
+    
+	% Plot position, acceleration, jerk, angles, load factor, drag and
     % thrust on each step of the trajectory                                            
     
     %% Two Dimensional Position
