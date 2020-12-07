@@ -100,10 +100,13 @@ function trajectory_cost = cost_function(x, C_u, C_v, C_w, ...
     
     performance_margin_min = (T_min/T_max)*100;
     
-    performance_margin_max = 90;
+    performance_margin_max = 100 - (T_min/T_max)*100;
     
     vehicle_constraints_penalty = (max(0, performance_margin - performance_margin_max) + ...
                                    max(0, performance_margin_min - performance_margin)).^2;
+    
+    vehicle_constraints_penalty = (max(0, T_a - T_max) + ...
+                                   max(0, T_min - T_a)).^2;
     
     vehicle_constraints_penalty = sum(vehicle_constraints_penalty);
     
