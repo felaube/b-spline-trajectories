@@ -15,9 +15,8 @@ function trajectory_cost = cost_function(x, C_u, C_v, C_w, ...
                                          T_max, T_min, gamma_max, gamma_min, ...
                                          num_set)
 
-    %{
-        Calculate the trajectory cost (objective function).
-    %}                    
+    % Calculate trajectory cost (objective function).
+    
     if num_set == 3 
         % Configuration used in the first optimization process 
         C_u_ = [C_u(1:3); x(1:4)];
@@ -32,49 +31,17 @@ function trajectory_cost = cost_function(x, C_u, C_v, C_w, ...
             C_w_ = [C_w(1:2); x(11:15)];
         end
     end
-    
-    %% Calculate position
-    x_a = x_0 + C_u_'*R_int;
-    y_a = y_0 + C_v_'*R_int;
-    z_a = z_0 + C_w_'*R_int;
 
-    %% Calculate speeds and their corresponding derivatives
-    u_a = C_u_'*R;
-    u_a_dot = C_u_'*R_dot*1/t_h;
-    u_a_dot_dot = C_u_'*R_dot_dot*(1/(t_h^2));
-
-    v_a = C_v_'*R;
-    v_a_dot = C_v_'*R_dot*1/t_h;
-    v_a_dot_dot = C_v_'*R_dot_dot*(1/(t_h^2));
-
-    w_a = C_w_'*R;
-    w_a_dot = C_w_'*R_dot*1/t_h;
-    w_a_dot_dot = C_w_'*R_dot_dot*(1/(t_h^2));
-
-    V_a = sqrt(u_a.^2 + v_a.^2 + w_a.^2);
-    V_a_dot = diff(V_a)./t_diff;
-    
-    %% Calculate flight path angle, heading angle and their derivatives
-    gamma_a = asin(w_a./V_a);
-    gamma_a(isnan(gamma_a)) = 0; % Not sure if this is necessary. CHECK LATER
-    
-    psi_a = asin(v_a./(V_a.*cos(gamma_a)));
-    psi_a(isnan(psi_a)) = 0; % Not sure if this is necessary. CHECK LATER
-    
-    % There are cases in which V_a is composed only by v_a.
-    % In those cases, the value of v_a./(V_a.*cos(gamma_a)) can get
-    % really close to 1, but not equal to 1. This can result in values
-    % of psi with imaginary part. When that happens, we have to 
-    % remove the imaginary part
-    if any(imag(psi_a))
-        psi_a = real(psi_a);
-    end
-    
-    psi_a_dot = diff(psi_a)./t_diff;
-    psi_a_dot_dot = diff(psi_a_dot)./t_diff(2:end);
-    
-    gamma_a_dot = diff(gamma_a)./t_diff;
-    gamma_a_dot_dot = diff(gamma_a_dot)./t_diff(2:end);
+	[x_a, y_a, z_a, u_a, v_a, w_a, ...
+     u_a_dot, v_a_dot, w_a_dot, ...
+     u_a_dot_dot, v_a_dot_dot, w_a_dot_dot, ...
+     V_a, V_a_dot, ...
+     gamma_a, psi_a, psi_a_dot, gamma_a_dot, ...
+     psi_a_dot_dot, gamma_a_dot_dot, ...
+     phi_a, n_a, C_L, C_D, D_a, T_a] = calc_traj_states(x_0, y_0, z_0, C_u_, C_v_, C_w_, ...
+                                                        R_int, R, R_dot, R_dot_dot, ...
+                                                        t_array, t_diff, t_h, ...
+                                                        g, rho, S, C_D_0, k, mass);
 
     %% Calculate costs
     position_cost = sum((x_d - x_a).^2 + (y_d - y_a).^2 + (z_d - z_a).^2)/(n*((max(R_obs) + safe_distance)^2));
@@ -91,33 +58,17 @@ function trajectory_cost = cost_function(x, C_u, C_v, C_w, ...
                                      x_a, y_a, z_a, ...
                                      t_array, safe_distance);
         
-        %obstacles_constraints_penalty = obstacles_constraints_penalty + ...
-        %                                    A_ob*1/distance;
-        
-        %obstacles_constraints_penalty = obstacles_constraints_penalty + ...
-        %                                        A_ob*exp(-alpha_ob*distance)/distance;
         
         obstacles_constraints_penalty = obstacles_constraints_penalty + ...
                                                 A_ob*exp(alpha_ob*(R_obs(i) + safe_distance - distance));
         
-        %obstacles_constraints_penalty = obstacles_constraints_penalty + ...
-        %                                       A_ob*exp(-distance + safe_distance);
     end
     
     % Calculate vehicle constraints penalty
+    vehicle_constraints_penalty = (max(0, T_a - T_max) + ...
+                                   max(0, T_min - T_a)).^2;
     
-    A_p = 1;
-    alpha_p = -5;
-    
-    performance_margin = vehicle_constraints_cost(gamma_a, gamma_a_dot, gamma_a_dot_dot, psi_a_dot, V_a, V_a_dot, ...
-                                                       g, rho, e, S, b, mass, AR, k, C_D_0, ...
-                                                       T_max, T_min, gamma_max, gamma_min);
-    
-    % The script deviates from the paper when evaluating the 
-    % vehicle_constraints_penalty. The function proposed in the paper
-    % is A_p * exp(-alpha_p*performance_margin)/performance_margin
-    vehicle_constraints_penalty = A_p * exp(-alpha_p*performance_margin)/exp(-alpha_p);
-    
+    vehicle_constraints_penalty = sum(vehicle_constraints_penalty);
     
     terminal_tracking_cost = lambda_h*((psi_d(n) - psi_a(n))/pi)^2 + lambda_f*((gamma_d(n) - gamma_a(n))/pi)^2;
     
