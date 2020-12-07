@@ -31,8 +31,8 @@ function [x, y, z, u, v, w, ...
     w_dot_dot = C_w'*R_dot_dot/(t_h^2);
 
     V = sqrt(u.^2 + v.^2 + w.^2);
-    V_dot = diff(V)./t_diff;
-    % V_dot = sqrt(u_dot.^2 + v_dot.^2 + w_dot.^2);
+    % V_dot = diff(V)./t_diff;
+    V_dot = sqrt(u_dot.^2 + v_dot.^2 + w_dot.^2);
     %% Calculate flight path angle, heading angle and their derivatives
     gamma = asin(w./V);
     gamma(isnan(gamma)) = 0; % Not sure if this is necessary. CHECK LATER
@@ -67,5 +67,5 @@ function [x, y, z, u, v, w, ...
 
     D = 1/2*rho*S*C_D.*V(2:end).^2;
 
-    T = D + mass*V_dot(1:end) + mass*g*sin(gamma(2:end));
-    % T = D + mass*V_dot(2:end) + mass*g*sin(gamma(2:end));
+    % T = D + mass*V_dot(1:end) + mass*g*sin(gamma(2:end));
+    T = D + mass*V_dot(2:end) + mass*g*sin(gamma(2:end));

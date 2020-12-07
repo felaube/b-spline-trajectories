@@ -64,47 +64,7 @@ function trajectory_cost = cost_function(x, C_u, C_v, C_w, ...
         
     end
     
-    %{
     % Calculate vehicle constraints penalty
-    
-    A_p = 1;
-    alpha_p = -5;
-    
-    performance_margin = vehicle_constraints_cost(gamma_a, gamma_a_dot, gamma_a_dot_dot, psi_a_dot, V_a, V_a_dot, ...
-                                                       g, rho, e, S, b, mass, AR, k, C_D_0, ...
-                                                       T_max, T_min, gamma_max, gamma_min);
-    
-    % The script deviates from the paper when evaluating the 
-    % vehicle_constraints_penalty. The function proposed in the paper
-    % is A_p * exp(-alpha_p*performance_margin)/performance_margin
-    vehicle_constraints_penalty = A_p * exp(-alpha_p*performance_margin);
-    %}
-    
-    % Calculate vehicle constraints penalty
-    
-    % A_p = 500000;
-    % alpha_p = 0.6;
-    
-    performance_margin = vehicle_constraints_cost(gamma_a, gamma_a_dot, gamma_a_dot_dot, gamma_min, gamma_max, ...
-                                                  psi_a_dot, V_a, V_a_dot, ...
-                                                  g, rho, e, S, b, mass, AR, k, C_D_0, ...
-                                                  T_a, T_min, T_max, phi_a, n_a);
-    
-    % The script deviates from the paper when evaluating the 
-    % vehicle_constraints_penalty. The function proposed in the paper
-    % is A_p * exp(-alpha_p*performance_margin)/performance_margin
-    
-    % vehicle_constraints_penalty = A_p * exp(-alpha_p*performance_margin)./performance_margin;
-    
-    % vehicle_constraints_penalty = sum(vehicle_constraints_penalty);
-    
-    performance_margin_min = (T_min/T_max)*100;
-    
-    performance_margin_max = 100 - (T_min/T_max)*100;
-    
-    vehicle_constraints_penalty = (max(0, performance_margin - performance_margin_max) + ...
-                                   max(0, performance_margin_min - performance_margin)).^2;
-    
     vehicle_constraints_penalty = (max(0, T_a - T_max) + ...
                                    max(0, T_min - T_a)).^2;
     

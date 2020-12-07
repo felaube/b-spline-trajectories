@@ -25,7 +25,7 @@ opts.Algorithm = 'sqp';
 % Default
 LAMBDA_P = 1; % position
 LAMBDA_S = 1; % speed
-LAMBDA_PRF = 1; % vehicle contraints
+LAMBDA_PRF = 1e4; % vehicle contraints
 LAMBDA_OB = 0; % obstacles constraints
 LAMBDA_T = 1e10; % terminal attitude
 LAMBDA_H = 1; % terminal heading angle
