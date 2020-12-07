@@ -68,3 +68,4 @@ function [x, y, z, u, v, w, ...
     D = 1/2*rho*S*C_D.*V(2:end).^2;
 
     T = D + mass*V_dot(1:end) + mass*g*sin(gamma(2:end));
+    % T = D + mass*V_dot(2:end) + mass*g*sin(gamma(2:end));
