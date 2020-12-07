@@ -9,12 +9,16 @@ function performance_margin = vehicle_constraints_cost(gamma, gamma_dot, gamma_d
 
     % performance_margin = 1.5*(max(gamma)/gamma_max)^2 + 1.5*(max(T)/T_max);
     
+    %{
     performance_margin = 100 - (T/T_max)*100;
-
+    
     performance_margin_min = 100 - (T_min/T_max)*100;
     
     performance_margin_max = 90;
 
     performance_margin(performance_margin<performance_margin_min) = performance_margin_min;
     performance_margin(performance_margin>performance_margin_max) = performance_margin_max;
+    %}
+    
+    performance_margin = 100 - (T/T_max)*100;
     

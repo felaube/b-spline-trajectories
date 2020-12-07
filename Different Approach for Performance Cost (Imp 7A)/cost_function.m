@@ -82,8 +82,8 @@ function trajectory_cost = cost_function(x, C_u, C_v, C_w, ...
     
     % Calculate vehicle constraints penalty
     
-    A_p = 500000;
-    alpha_p = 0.6;
+    % A_p = 500000;
+    % alpha_p = 0.6;
     
     performance_margin = vehicle_constraints_cost(gamma_a, gamma_a_dot, gamma_a_dot_dot, gamma_min, gamma_max, ...
                                                   psi_a_dot, V_a, V_a_dot, ...
@@ -93,10 +93,19 @@ function trajectory_cost = cost_function(x, C_u, C_v, C_w, ...
     % The script deviates from the paper when evaluating the 
     % vehicle_constraints_penalty. The function proposed in the paper
     % is A_p * exp(-alpha_p*performance_margin)/performance_margin
-    vehicle_constraints_penalty = A_p * exp(-alpha_p*performance_margin)./performance_margin;
+    
+    % vehicle_constraints_penalty = A_p * exp(-alpha_p*performance_margin)./performance_margin;
+    
+    % vehicle_constraints_penalty = sum(vehicle_constraints_penalty);
+    
+    performance_margin_min = (T_min/T_max)*100;
+    
+    performance_margin_max = 90;
+    
+    vehicle_constraints_penalty = (max(0, performance_margin - performance_margin_max) + ...
+                                   max(0, performance_margin_min - performance_margin)).^2;
     
     vehicle_constraints_penalty = sum(vehicle_constraints_penalty);
-    
     
     terminal_tracking_cost = lambda_h*(psi_d(n) - psi_a(n))^2 + lambda_f*(gamma_d(n) - gamma_a(n))^2;
     
