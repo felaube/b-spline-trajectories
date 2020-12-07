@@ -31,8 +31,8 @@ function trajectory_cost = cost_function(x, C_u, C_v, C_w, ...
             C_w_ = [C_w(1:2); x(11:15)];
         end
     end
-    
-    [x_a, y_a, z_a, u_a, v_a, w_a, ...
+
+	[x_a, y_a, z_a, u_a, v_a, w_a, ...
      u_a_dot, v_a_dot, w_a_dot, ...
      u_a_dot_dot, v_a_dot_dot, w_a_dot_dot, ...
      V_a, V_a_dot, ...
@@ -72,11 +72,10 @@ function trajectory_cost = cost_function(x, C_u, C_v, C_w, ...
     
     terminal_tracking_cost = lambda_h*(psi_d(n) - psi_a(n))^2 + lambda_f*(gamma_d(n) - gamma_a(n))^2;
     
-    % Currently not being considered
     terminal_position_cost = 1e4*(1*(x_a(n) - x_d(n))^2 + 1*(y_a(n) - y_d(n))^2 + 1*(z_a(n) - z_d(n))^2);
     
     % Saturation of costs to avoid NaN and Inf results 
-    % for the objective function
+    % in the objective function
     position_cost = min(position_cost, 1e200);
     speed_cost = min(speed_cost, 1e200);
     vehicle_constraints_penalty = min(vehicle_constraints_penalty, 1e200);
