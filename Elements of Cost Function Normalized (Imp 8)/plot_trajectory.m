@@ -44,6 +44,7 @@ function plot_trajectory(x, y, z, u, v, w, ...
     
     %% Two Dimensional velocities
     
+    %{
     figure(4)
     subplot(3,1,1);
     plot(t_array, u, 'color','k','marker','.','markersize',16)
@@ -65,14 +66,16 @@ function plot_trajectory(x, y, z, u, v, w, ...
     xlabel("t")
     ylabel("w")
 
-   
     figure(7)
     plot(t_array, V, 'color','k','marker','.','markersize',16)
     xlabel("t")
     ylabel("V")
     
-    %% Two Dimensional acceleration
+    %}
     
+    %% Two Dimensional acceleration
+
+    %{
     figure(8)
     subplot(3,1,1);
     plot(t_array, u_dot, 'color','k','marker','.','markersize',16)
@@ -104,7 +107,8 @@ function plot_trajectory(x, y, z, u, v, w, ...
     %plot(t_array(2:end), V_dot, 'color','k','marker','.','markersize',16)
     %xlabel("t")
     %ylabel("$\dot{V}$",'interpreter','latex')
- %}
+    %}
+ 
  
     % Convert color code to 1-by-3 RGB array (0~1 each)
     str = '#D9FFFF';
@@ -123,7 +127,7 @@ function plot_trajectory(x, y, z, u, v, w, ...
     xlabel("x")
     ylabel("y")
     zlabel("z")
-    %view(-101.9, 1.2)
+    %view(-101.9, 1.2) % Different point of view
     hold off
 
     %{
@@ -143,7 +147,6 @@ function plot_trajectory(x, y, z, u, v, w, ...
     
     %%{
     figure(15)
-    %plot(t_array(3:end), T, 'color','k','marker','.','markersize',16)
     plot(t_array(2:end), T, 'color','k','marker','.','markersize',16)
     xlabel("t")
     ylabel("T")
