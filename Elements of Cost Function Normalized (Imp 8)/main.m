@@ -40,7 +40,7 @@ LAMBDA_T = 5; % terminal attitude
 LAMBDA_H = 1; % terminal heading angle
 LAMBDA_F = 1; % terminal flight path angle
 
-avoiding_minima = false;
+avoiding_minima = false;    
 
 % Discretization of the receding horizon trajectory
 
