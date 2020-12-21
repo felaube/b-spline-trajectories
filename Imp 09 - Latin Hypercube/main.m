@@ -92,10 +92,10 @@ for row = 1 : length(PARAMETERS)
     SAFE_DISTANCE = 100;
 
     % Aircraft Parameters
-    VEHICLE_CASE = 1;
+    VEHICLE_ID = 1;
     [e, S, b, T_max, mass, AR, k, C_D_0, ...
      gamma_max, gamma_min, phi_max, phi_min, ...
-     n_max, n_min, V_min_drag, T_min] = vehicle_parameters(VEHICLE_CASE, G, RHO);
+     n_max, n_min, V_min_drag, T_min] = vehicle_parameters(VEHICLE_ID, G, RHO);
 
     % Global Trajectory
     % Level Flight

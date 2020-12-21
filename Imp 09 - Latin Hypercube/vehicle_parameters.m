@@ -1,8 +1,12 @@
 function [e, S, b, T_max, mass, AR, k, C_D_0, ...
           gamma_max, gamma_min, phi_max, phi_min, ...
-          n_max, n_min, V_min_drag, T_min] = vehicle_parameters(vehicle_case, G, RHO)
-
-    switch vehicle_case
+          n_max, n_min, V_min_drag, T_min] = vehicle_parameters(vehicle_id, G, RHO)
+    
+    %{
+        This function stores the vehicle parameters for different 
+        aircrafts.
+    %}
+    switch vehicle_id
         case 0 % DECODE 2
             % Oswald factor [-]
             e = 0.8;
