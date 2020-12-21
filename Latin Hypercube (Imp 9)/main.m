@@ -460,7 +460,7 @@ for row = 1 : length(PARAMETERS)
                         phi, load_factor, T, t_array, ...
                         past_x, past_y, past_z, ...
                         num_obs, x_obs, y_obs, z_obs, R_obs);
-        %}          
+        %}
         if any(x(1) >= x_obs(end) + R_obs(end)*20)
             break
         end
