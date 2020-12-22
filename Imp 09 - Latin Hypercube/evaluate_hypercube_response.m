@@ -8,4 +8,16 @@ function [energy, convergence, smoothness] = evaluate_hypercube_response(V, T, x
     
     convergence = all(distance_to_required <= 0.05);
     
-    smoothness = 0;
+    diff_x = diff(x);
+    diff_y = diff(y);
+    diff_z = diff(z);
+    
+    angle_x_y = asin(diff_y./diff_x);
+    angle_x_z = asin(diff_z./diff_x);
+    angle_y_z = asin(diff_z./diff_y);
+    
+    diff_angle_x_y = diff(angle_x_y);
+    diff_angle_x_z = diff(angle_x_z);
+    diff_angle_y_z = diff(angle_y_z);
+    
+    smoothness = sum(abs(diff_angle_x_y) + abs(diff_angle_x_z)+ abs(diff_angle_y_z));
