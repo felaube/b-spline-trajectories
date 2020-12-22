@@ -39,8 +39,11 @@ PARAMETERS = [1, 2, 3, 4;...
               ];
 v = 1:10;
 
+v = 1:8;
+
 PARAMETERS = nchoosek(v,4);
-PARAMETERS = [1, 1, 1, 5];
+% PARAMETERS = [1, 1, 1, 5];
+
 for row = 1 : length(PARAMETERS)
     
     LAMBDA_P = PARAMETERS(row, 1); % position
@@ -228,9 +231,8 @@ for row = 1 : length(PARAMETERS)
     % and the optmization results
     optim_vars = cell(3, 28);
     cost_val(1:28) = Inf;
-
+    
     while true
-        % tic
         cost_val(:) = Inf;
 
         C_u(1) = u_0;
@@ -303,7 +305,6 @@ for row = 1 : length(PARAMETERS)
 
             trajectory_index = 2;
 
-            % tic
             for i = 1 : length(phi_array)
                 for j = 1 : length(T_array)
                     for l = 1 : length(n_array)
@@ -369,9 +370,6 @@ for row = 1 : length(PARAMETERS)
                 end
             end
         end
-        % t = toc;
-
-        % sprintf("Avoiding minima execution time: %.8f", t)    
 
         [~,index] = min(cost_val);
 
@@ -463,6 +461,18 @@ for row = 1 : length(PARAMETERS)
                         num_obs, x_obs, y_obs, z_obs, R_obs);
         %}
         if any(x(1) >= x_obs(end) + R_obs(end)*20)
+            %{
+            plot_trajectory(x, y, z, u, v, w, ...
+                            u_dot, v_dot, w_dot, ...
+                            u_dot_dot, v_dot_dot, w_dot_dot, ...
+                            V, V_dot, gamma, psi, ...
+                            psi_dot, psi_dot_dot, ...
+                            gamma_dot, gamma_dot_dot, ...
+                            phi, load_factor, T, t_array, ...
+                            past_x, past_y, past_z, ...
+                            x_d, y_d, z_d, ...
+                            num_obs, x_obs, y_obs, z_obs, R_obs);
+            %}
             break
         end
 
@@ -538,14 +548,15 @@ for row = 1 : length(PARAMETERS)
         y_obs = y_obs + v_obs*(t_diff(1)*NUM_TRAV_WAYPOINTS);
         z_obs = z_obs + w_obs*(t_diff(1)*NUM_TRAV_WAYPOINTS);
 
-        % toc
-        % pause(0.5)
     end
+    
     [energy, convergence, smoothness] = evaluate_hypercube_response(V, T, x, y, z, x_d, y_d, z_d, t_array);
     fprintf("For LAMBDA_P = %d, LAMBDA_S = %d, LAMBDA_PRF = %d and LAMBDA_T = %d, the energy was %f. Did the trajectory converged into the global trajectory? %s \n", LAMBDA_P, LAMBDA_S, LAMBDA_PRF, LAMBDA_T, energy, mat2str(convergence))
     if row == 1
-        writematrix([LAMBDA_P LAMBDA_S LAMBDA_PRF LAMBDA_T energy convergence], 'response.xls')
+        writematrix([LAMBDA_P LAMBDA_S LAMBDA_PRF LAMBDA_T energy convergence smoothness], 'response.xls')
     else
-        writematrix([LAMBDA_P LAMBDA_S LAMBDA_PRF LAMBDA_T energy convergence], 'response.xls', 'WriteMode', 'append')
+        writematrix([LAMBDA_P LAMBDA_S LAMBDA_PRF LAMBDA_T energy convergence smoothness], 'response.xls', 'WriteMode', 'append')
     end
+    
 end
+%toc
