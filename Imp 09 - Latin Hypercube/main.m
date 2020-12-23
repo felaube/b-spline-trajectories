@@ -37,15 +37,15 @@ PARAMETERS = [1, 2, 3, 4;...
               3, 4, 1, 2;...
               4, 1, 2, 3;...
               ];
-v = 1:5;
+v = 1:10;
 
 % v = 1:5;
 
 PARAMETERS = nchoosek(v,4);
-PARAMETERS = [4, 1, 2, 5];
+% PARAMETERS = [4, 1, 2, 5];
 for row = 1 : size(PARAMETERS, 1) 
-    % permutated_rows = perms(PARAMETERS(row, :));
-    permutated_rows = PARAMETERS;
+   permutated_rows = perms(PARAMETERS(row, :));
+    % permutated_rows = PARAMETERS;
     for perm_row = 1 : size(permutated_rows, 1)
         LAMBDA_P = permutated_rows(perm_row, 1); % position
         LAMBDA_S = permutated_rows(perm_row, 2); % speed
