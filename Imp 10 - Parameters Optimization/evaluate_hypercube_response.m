@@ -6,7 +6,9 @@ function [energy, convergence, smoothness] = evaluate_hypercube_response(V, T, x
     distance_to_required(1+length(x):2*length(x)) = abs(y - y_d)./y_d;
     distance_to_required(1+2*length(x):3*length(x)) = abs(z - z_d)./z_d;
     
-    convergence = all(distance_to_required <= 0.05);
+    % convergence = all(distance_to_required <= 0.05);
+    
+    convergence = sum(distance_to_required);
     
     diff_x = diff(past_x);
     diff_y = diff(past_y);
