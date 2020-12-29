@@ -23,15 +23,13 @@ function target = trajectory_optimization(parameters, opts)
     % t_diff, as implemented here, is an array. It could just as well
     % be a constant, since the points are "equitemporal". However,
     % by maintaining it as an array, the script is ready to deal
-    % with non "equitemporal" points, if this scenario is ever considered
-    % someday
+    % with non "equitemporal" points, if the necessity arises
     t_diff = diff(t_array);
 
     % Obstacles
 
-    % Bear in mind that the method does not behave well when the starting 
-    % position of the obstacle is too close to the starting position 
-    % of the vehicle
+    % The method does not behave well when the starting position 
+    % of the obstacle is too close to the starting position of the vehicle
     OBSTACLES_SCENARIO_ID = 8;
     [x_obs, y_obs, z_obs, R_obs, u_obs, v_obs, w_obs, num_obs] = obstacle_scenario(OBSTACLES_SCENARIO_ID);
 
