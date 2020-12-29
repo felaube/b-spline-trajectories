@@ -21,9 +21,11 @@ opts.Algorithm = 'sqp';
 %opts.TolX = 1e-16;
 %opts.ConstraintTolerance = 1e-03;
 
-opts2 = optimoptions('fmincon');
-opts2.Display = 'off';
-opts2.Algorithm = 'active-set';
+%opts2 = optimoptions('fmincon');
+%opts2.Display = 'off';
+%opts2.Algorithm = 'sqp';
+
+opts2 = optimset('Display', 'off');
 
 % Scaling factors
 % Default
@@ -41,9 +43,10 @@ objective = @(parameters) trajectory_optimization(parameters, opts);
 lower_bounds = [1, 1, 1, 1];
 
 tic
-[optimalWayPoints, fval, ~, output] = fmincon(objective, ic(:), [],[],[],[],lower_bounds,[],[],opts2);
+% [optimalWayPoints, fval, ~, output] = fmincon(objective, ic(:), [],[],[],[],lower_bounds,[],[],opts2);
+[optimalWayPoints, fval, ~, output] = fminsearch(objective, ic(:), opts2);
 t = toc;
 
 sprintf("Iterations: %i funcCount: %i", output.iterations, output.funcCount)
 sprintf("Execution time: %.8f", t)
-fprintf("For LAMBDA_P = %d, LAMBDA_S = %d, LAMBDA_PRF = %d and LAMBDA_T = %d, the smoothness was %f.\n", optimalWayPoints(1), optimalWayPoints(2), optimalWayPoints(3), optimalWayPoints(4), -fval)
+fprintf("For LAMBDA_P = %d, LAMBDA_S = %d, LAMBDA_PRF = %d and LAMBDA_T = %d. Objective: %f.\n", optimalWayPoints(1), optimalWayPoints(2), optimalWayPoints(3), optimalWayPoints(4), fval)
