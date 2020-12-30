@@ -70,14 +70,18 @@ function target = trajectory_optimization(lambdas, opts)
     v_g = V_g.*cos(gamma_g).*sin(psi_g);
     w_g = V_g.*sin(gamma_g);
     
-    x_g(1:5*NUM_LOCAL_WAYPOINTS) = linspace(0, 5*HORIZON_TIME*V_g(1), 5*NUM_LOCAL_WAYPOINTS);
-    y_g(1:5*NUM_LOCAL_WAYPOINTS) = 10;
-    z_g(1:5*NUM_LOCAL_WAYPOINTS) = 1000;
+    %x_g(1:5*NUM_LOCAL_WAYPOINTS) = linspace(0, 5*HORIZON_TIME*V_g(1), 5*NUM_LOCAL_WAYPOINTS);
+    %y_g(1:5*NUM_LOCAL_WAYPOINTS) = 10;
+    %z_g(1:5*NUM_LOCAL_WAYPOINTS) = 1000;
     
-    %x_g(1:5*NUM_LOCAL_WAYPOINTS) = linspace(0, 5*HORIZON_TIME*u_g(1), 5*(NUM_LOCAL_WAYPOINTS - 1) + 1);
-    %y_g(1:5*NUM_LOCAL_WAYPOINTS) = linspace(0, 5*HORIZON_TIME*v_g(1), 5*(NUM_LOCAL_WAYPOINTS - 1) + 1);
-    %z_g(1:5*NUM_LOCAL_WAYPOINTS) = linspace(0, 5*HORIZON_TIME*w_g(1), 5*(NUM_LOCAL_WAYPOINTS - 1) + 1);
+    %x_g = linspace(0, 5*HORIZON_TIME*u_g(1), 5*(NUM_LOCAL_WAYPOINTS - 1) + 1);
+    %y_g = linspace(10, 5*HORIZON_TIME*v_g(1), 5*(NUM_LOCAL_WAYPOINTS - 1) + 1);
+    %z_g = linspace(1000, 5*HORIZON_TIME*w_g(1), 5*(NUM_LOCAL_WAYPOINTS - 1) + 1);
 
+    x_g = 0 : t_diff(1) * u_g(1) : 5 * HORIZON_TIME * u_g(1);
+    y_g = 10 * ones(1, length(x_g));
+    z_g = 1000 * ones(1, length(x_g));
+    
     % Demanded Trajectory
     V_d(1:NUM_LOCAL_WAYPOINTS) = V_g(1:NUM_LOCAL_WAYPOINTS);
     x_d(1:NUM_LOCAL_WAYPOINTS) = x_g(1:NUM_LOCAL_WAYPOINTS);
