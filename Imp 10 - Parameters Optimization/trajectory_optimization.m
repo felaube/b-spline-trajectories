@@ -430,9 +430,9 @@ function target = trajectory_optimization(lambdas, opts)
         w_d = w_g(1:NUM_LOCAL_WAYPOINTS);
 
         % Update obstacle position
-        x_obs = x_obs + u_obs*(t_diff(1)*NUM_TRAV_WAYPOINTS);
-        y_obs = y_obs + v_obs*(t_diff(1)*NUM_TRAV_WAYPOINTS);
-        z_obs = z_obs + w_obs*(t_diff(1)*NUM_TRAV_WAYPOINTS);
+        x_obs = x_obs + u_obs*(t_array(NUM_TRAV_WAYPOINTS + 1));
+        y_obs = y_obs + v_obs*(t_array(NUM_TRAV_WAYPOINTS + 1));
+        z_obs = z_obs + w_obs*(t_array(NUM_TRAV_WAYPOINTS + 1));
 
     end
 
