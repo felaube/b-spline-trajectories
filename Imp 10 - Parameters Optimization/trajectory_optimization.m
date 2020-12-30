@@ -1,10 +1,20 @@
-function target = trajectory_optimization(parameters, opts)
-
-    LAMBDA_P = parameters(1); % position
-    LAMBDA_S = parameters(2); % speed
-    LAMBDA_PRF = parameters(3); % vehicle contraints
+function target = trajectory_optimization(lambdas, opts)
+    
+    if nargin < 2
+        % Set default optimization settings
+        opts = optimoptions('fmincon', 'Algorithm', 'sqp', 'Display', 'off');
+    end
+    
+    if nargin < 1
+        % Set default lambdas values
+        lambdas = [1, 1, 1, 5];
+    end
+        
+    LAMBDA_P = lambdas(1); % position
+    LAMBDA_S = lambdas(2); % speed
+    LAMBDA_PRF = lambdas(3); % vehicle contraints
     LAMBDA_OB = 0; % obstacles constraints
-    LAMBDA_T = parameters(4); % terminal attitude
+    LAMBDA_T = lambdas(4); % terminal attitude
     LAMBDA_H = 1; % terminal heading angle
     LAMBDA_F = 1; % terminal flight path angle
 
@@ -53,14 +63,20 @@ function target = trajectory_optimization(parameters, opts)
     % Global Trajectory
     % Level Flight
     V_g(1:5*NUM_LOCAL_WAYPOINTS) = 30;
-    x_g(1:5*NUM_LOCAL_WAYPOINTS) = linspace(0, 5*HORIZON_TIME*V_g(1), 5*NUM_LOCAL_WAYPOINTS);
-    y_g(1:5*NUM_LOCAL_WAYPOINTS) = 10;
-    z_g(1:5*NUM_LOCAL_WAYPOINTS) = 1000;
     psi_g(1:5*NUM_LOCAL_WAYPOINTS) = 0;
     gamma_g(1:5*NUM_LOCAL_WAYPOINTS) = 0;
+    
     u_g = V_g.*cos(gamma_g).*cos(psi_g);
     v_g = V_g.*cos(gamma_g).*sin(psi_g);
     w_g = V_g.*sin(gamma_g);
+    
+    x_g(1:5*NUM_LOCAL_WAYPOINTS) = linspace(0, 5*HORIZON_TIME*V_g(1), 5*NUM_LOCAL_WAYPOINTS);
+    y_g(1:5*NUM_LOCAL_WAYPOINTS) = 10;
+    z_g(1:5*NUM_LOCAL_WAYPOINTS) = 1000;
+    
+    %x_g(1:5*NUM_LOCAL_WAYPOINTS) = linspace(0, 5*HORIZON_TIME*u_g(1), 5*(NUM_LOCAL_WAYPOINTS - 1) + 1);
+    %y_g(1:5*NUM_LOCAL_WAYPOINTS) = linspace(0, 5*HORIZON_TIME*v_g(1), 5*(NUM_LOCAL_WAYPOINTS - 1) + 1);
+    %z_g(1:5*NUM_LOCAL_WAYPOINTS) = linspace(0, 5*HORIZON_TIME*w_g(1), 5*(NUM_LOCAL_WAYPOINTS - 1) + 1);
 
     % Demanded Trajectory
     V_d(1:NUM_LOCAL_WAYPOINTS) = V_g(1:NUM_LOCAL_WAYPOINTS);
@@ -423,7 +439,7 @@ function target = trajectory_optimization(parameters, opts)
     [energy, convergence, smoothness] = evaluate_hypercube_response(V, T, x, y, z, x_d, y_d, z_d, past_x, past_y, past_z, t_array);
     fprintf("For LAMBDA_P = %d, LAMBDA_S = %d, LAMBDA_PRF = %d and LAMBDA_T = %d, the energy was %f and the smoothness was %f. Did the trajectory converge into the global trajectory? %s \n", LAMBDA_P, LAMBDA_S, LAMBDA_PRF, LAMBDA_T, energy, smoothness, mat2str(convergence))
     
-    lower_bound_constraint = (max(0, 1 - parameters(1)) + max(0, 1 - parameters(2)) + max(0, 1 - parameters(3)) + max(0, 1 - parameters(4)))^2;
+    lower_bound_constraint = (max(0, 1 - lambdas(1)) + max(0, 1 - lambdas(2)) + max(0, 1 - lambdas(3)) + max(0, 1 - lambdas(4)))^2;
     
     %target = -smoothness + 1e10*lower_bound_constraint;
     %target = convergence + 1e10*lower_bound_constraint;
