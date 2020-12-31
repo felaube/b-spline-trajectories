@@ -1,4 +1,4 @@
-function target = trajectory_optimization(lambdas, opts)
+function trajectory_evaluation = trajectory_optimization(lambdas, opts)
     
     if nargin < 2
         % Set default optimization settings
@@ -443,12 +443,10 @@ function target = trajectory_optimization(lambdas, opts)
     [energy, convergence, smoothness] = evaluate_hypercube_response(V, T, x, y, z, x_d, y_d, z_d, past_x, past_y, past_z, t_array);
     fprintf("For LAMBDA_P = %d, LAMBDA_S = %d, LAMBDA_PRF = %d and LAMBDA_T = %d, the energy was %f and the smoothness was %f. Did the trajectory converge into the global trajectory? %s \n", LAMBDA_P, LAMBDA_S, LAMBDA_PRF, LAMBDA_T, energy, smoothness, mat2str(convergence))
     
-    lower_bound_constraint = (max(0, 1 - lambdas(1)) + max(0, 1 - lambdas(2)) + max(0, 1 - lambdas(3)) + max(0, 1 - lambdas(4)))^2;
+    % lower_bound_constraint = (max(0, 1 - lambdas(1)) + max(0, 1 - lambdas(2)) + max(0, 1 - lambdas(3)) + max(0, 1 - lambdas(4)))^2;
     
-    %target = -smoothness + 1e10*lower_bound_constraint;
-    %target = convergence + 1e10*lower_bound_constraint;
-    target = energy + 1e10*lower_bound_constraint;
-    %if (row == 1 && perm_row == 1)
-    %    writematrix(["LAMBDA_P" "LAMBDA_S" "LAMBDA_PRF" "LAMBDA_T" "energy" "convergence" "smoothness"], 'response.xls')
-    %end
-    %    writematrix([LAMBDA_P LAMBDA_S LAMBDA_PRF LAMBDA_T energy convergence smoothness], 'response.xls', 'WriteMode', 'append')
+    % trajectory_evaluation = -smoothness + 1e10*lower_bound_constraint;
+    % trajectory_evaluation = convergence + 1e10*lower_bound_constraint;
+    % trajectory_evaluation = energy + 1e10*lower_bound_constraint;
+    trajectory_evaluation = [energy, convergence, smoothness];
+
