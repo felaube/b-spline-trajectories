@@ -25,7 +25,8 @@ opts.Algorithm = 'sqp';
 %opts2.Display = 'off';
 %opts2.Algorithm = 'sqp';
 
-opts2 = optimset('Display', 'off');
+% opts2 = optimset('Display', 'off', 'TolX', 0.1);
+opts2 = optimoptions('fmincon', 'Algorithm', 'sqp', 'Display', 'off', 'TolX', 0.1);
 
 % Scaling factors
 % Default
@@ -40,11 +41,10 @@ LAMBDA_F = 1; % terminal flight path angle
 % Optimizin parameters
 ic = [LAMBDA_P; LAMBDA_S; LAMBDA_PRF; LAMBDA_T];
 objective = @(parameters) trajectory_optimization(parameters, opts);
-lower_bounds = [1, 1, 1, 1];
 
 tic
-% [optimalWayPoints, fval, ~, output] = fmincon(objective, ic(:), [],[],[],[],lower_bounds,[],[],opts2);
-[optimalWayPoints, fval, ~, output] = fminsearch(objective, ic(:), opts2);
+[optimalWayPoints, fval, ~, output] = fmincon(objective, ic(:), [],[],[],[],[],[],[],opts2);
+% [optimalWayPoints, fval, ~, output] = fminsearch(objective, ic(:), opts2);
 t = toc;
 
 sprintf("Iterations: %i funcCount: %i", output.iterations, output.funcCount)
