@@ -351,7 +351,7 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
                         num_obs, x_obs, y_obs, z_obs, R_obs);
         %}
         if x(1) >= (x_obs(end) + R_obs(end)*20) || length(x) > 2000
-            
+            %{
             plot_trajectory(x, y, z, u, v, w, ...
                             u_dot, v_dot, w_dot, ...
                             u_dot_dot, v_dot_dot, w_dot_dot, ...
@@ -362,7 +362,7 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
                             past_x, past_y, past_z, ...
                             x_d, y_d, z_d, ...
                             num_obs, x_obs, y_obs, z_obs, R_obs);
-            
+            %}
             break
         end
 

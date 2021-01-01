@@ -13,9 +13,9 @@ function plot_trajectory(x, y, z, u, v, w, ...
     % thrust on each step of the trajectory                                            
     
     %% Two Dimensional Position
-    %{
+    %%{
     figure(1)
-    subplot(2,1,1);
+    subplot(3,1,1);
     plot(x, y, 'color','k','marker','.','markersize',16)
     for i = 1 : m
         viscircles([x_obs(i) y_obs(i)], R_obs(i));
@@ -25,8 +25,7 @@ function plot_trajectory(x, y, z, u, v, w, ...
     xlabel("x")
     ylabel("y")
 
-    %figure(2)
-    subplot(2,1,2);
+    subplot(3,1,2);
     plot(x, z, 'color','k','marker','.','markersize',16)
     for i = 1 : m
         viscircles([x_obs(i) z_obs(i)], R_obs(i));
@@ -36,12 +35,17 @@ function plot_trajectory(x, y, z, u, v, w, ...
     xlabel("x")
     ylabel("z")
     
-    figure(3)
+    subplot(3,1,3);
     plot(y, z, 'color','k','marker','.','markersize',16)
+    for i = 1 : m
+        viscircles([y_obs(i) z_obs(i)], R_obs(i));
+    end
+    grid on
+    axis equal
     xlabel("y")
     ylabel("z")
     
-    %}
+    %%}
     
     %% Two Dimensional velocities
     
