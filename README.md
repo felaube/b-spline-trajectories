@@ -1,6 +1,6 @@
 # b-spline-trajectories
 
-Exploratory research on short-term trajectory optimization of fixed-wing aircraft using a B-spline parameterization.
+Exploratory research on short-term trajectory optimization for fixed-wing aircraft using a B-spline parameterization.
 
 Each folder is a different implementation of the method, where a specific aspect of the algorithm is studied.
 
