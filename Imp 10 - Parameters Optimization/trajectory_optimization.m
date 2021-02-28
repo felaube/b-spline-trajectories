@@ -7,7 +7,25 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
     
     if nargin < 1
         % Set default lambdas values
-        lambdas = [1, 1, 1, 5];
+        %lambdas = [1, 1, 1, 5];  % Estava assim, por algum motivo
+        %lambdas = [1, 10, 10, 5];  % O que estava na Imp. 8
+        %lambdas = [10, 50, 1, 5];  % Mais ou menos o que estava na referência 2
+        
+        %lambdas = [1, 8, 9, 3];  % Máximo smoothness sem outliers
+        
+        %lambdas = [1, 9, 4, 5];  % Energy, convergence and smoothness compromise (sem outliers)
+        %lambdas = [1, 10, 3, 3];  % Energy, convergence and smoothness compromise (sem outliers)
+        %lambdas = [2, 7, 1, 5];  % Energy, convergence and smoothness compromise (sem outliers)
+        %lambdas = [2, 7, 4, 10];  % Energy, convergence and smoothness compromise (sem outliers)
+        
+        %lambdas = [6, 1, 4, 2];  % Energy, convergence compromise (sem outliers)
+       % lambdas = [8, 3, 7, 1];  % Energy, convergence compromise (sem outliers)
+        
+       % lambdas = [6, 2, 10, 9];  % Mínima convergência
+       
+        lambdas = [10, 2, 4, 1];  % Testes
+        lambdas = [1, 1, 1, 1];  % Testes
+        %lambdas = [1, 10, 10, 5];  % Testes
     end
         
     LAMBDA_P = lambdas(1); % position
@@ -22,10 +40,10 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
 
     % Number of waypoints in local trajectory
     NUM_LOCAL_WAYPOINTS = 51;
-    % Number of traveled points between consecutive steps. 
+    % Number of traveled points before running the optimization process again
     NUM_TRAV_WAYPOINTS = 4;
     % Receding horizon time
-    HORIZON_TIME = 200;
+    HORIZON_TIME = 100;
 
     tal = linspace(0, 1, NUM_LOCAL_WAYPOINTS);
     t_array = tal*HORIZON_TIME;
@@ -40,7 +58,7 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
 
     % The method does not behave well when the starting position 
     % of the obstacle is too close to the starting position of the vehicle
-    OBSTACLES_SCENARIO_ID = 8;
+    OBSTACLES_SCENARIO_ID = 0;
     [x_obs, y_obs, z_obs, R_obs, u_obs, v_obs, w_obs, num_obs] = obstacle_scenario(OBSTACLES_SCENARIO_ID);
 
     % Constants
@@ -79,7 +97,7 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
     %z_g = linspace(1000, 5*HORIZON_TIME*w_g(1), 5*(NUM_LOCAL_WAYPOINTS - 1) + 1);
 
     x_g = 0 : t_diff(1) * u_g(1) : 5 * HORIZON_TIME * u_g(1);
-    y_g = 10 * ones(1, length(x_g));
+    y_g = 1000 * ones(1, length(x_g));
     z_g = 1000 * ones(1, length(x_g));
     
     % Demanded Trajectory
@@ -107,7 +125,7 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
     w_0_dot_dot = 0;   
 
     x_0 = 0;
-    y_0 = 10;
+    y_0 = 1000;
     z_0 = 1200;
 
     % Vector of Coefficients
@@ -116,7 +134,7 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
     C_w = zeros(7, 1);
 
     % OBS: A SOLUÇÃO É EXTREMAMENTE SENSÍVEL AO VALOR INICIAL DE C_u(4:7)
-    C_u(4:7) = 10;
+    C_u(4:7) = 30;
     C_v(4:7) = 0;
     C_w(4:7) = 0;
 
@@ -191,17 +209,26 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
     past_x = [];
     past_y = [];
     past_z = [];
+    past_x_d = [];
+    past_y_d = [];
+    past_z_d = [];
     past_psi = [];
+    past_phi = [];
     past_gamma = [];
     past_u = [];
     past_v = [];
     past_w = [];
-
+    past_T = [];
+    
     % Initialize variables used to store the objective function value
     % and the optmization results
     optim_vars = cell(3, 28);
     cost_val(1:28) = Inf;
-
+    
+    counter = 0;
+    time_sum = 0;
+    iterations_counter = 0;
+    funcCount_counter = 0;
     while true
         cost_val(:) = Inf;
 
@@ -249,10 +276,14 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
                                               G, RHO, e, S, b, T_max, mass, AR, k, C_D_0, T_min, ...
                                               SAFE_DISTANCE, 3);
 
-        %tic
+        tic
         [optimalWayPoints, fval, ~, output] = fmincon(objective, ic(:), [],[],[],[],[],[],nonlcon,opts);
-        %t = toc;
-
+        t = toc;
+        
+        time_sum = time_sum + t;
+        iterations_counter = iterations_counter + output.iterations;
+        funcCount_counter = funcCount_counter + output.funcCount;
+    
         % sprintf("Iterations: %i funcCount: %i", output.iterations, output.funcCount)
         % sprintf("Execution time: %.8f", t)
 
@@ -334,11 +365,11 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
          V, V_dot, ...
          gamma, psi, psi_dot, gamma_dot, ...
          psi_dot_dot, gamma_dot_dot, ...
-         phi, load_factor, C_L, C_D, D, T] = calc_traj_states(x_0, y_0, z_0, C_u, C_v, C_w, ...
-                                                              R_int, R, R_dot, R_dot_dot, ...
-                                                              t_array, t_diff, HORIZON_TIME, ...
-                                                              G, RHO, S, C_D_0, k, mass);
-        %{
+         phi, load_factor, C_L, C_D, D, T] = calculate_trajectory_states(x_0, y_0, z_0, C_u, C_v, C_w, ...
+                                                                         R_int, R, R_dot, R_dot_dot, ...
+                                                                         t_array, t_diff, HORIZON_TIME, ...
+                                                                         G, RHO, S, C_D_0, k, mass);
+        %%{
         plot_trajectory(x, y, z, u, v, w, ...
                         u_dot, v_dot, w_dot, ...
                         u_dot_dot, v_dot_dot, w_dot_dot, ...
@@ -347,23 +378,33 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
                         gamma_dot, gamma_dot_dot, ...
                         phi, load_factor, T, t_array, ...
                         past_x, past_y, past_z, ...
+                        past_x_d, past_y_d, past_z_d, ...
+                        past_u, past_v, past_w, ...
+                        past_phi, past_gamma, past_T, ...
                         x_d, y_d, z_d, ...
                         num_obs, x_obs, y_obs, z_obs, R_obs);
-        %}
-        if x(1) >= (x_obs(end) + R_obs(end)*20) || length(x) > 2000
-            %{
-            plot_trajectory(x, y, z, u, v, w, ...
-                            u_dot, v_dot, w_dot, ...
-                            u_dot_dot, v_dot_dot, w_dot_dot, ...
-                            V, V_dot, gamma, psi, ...
-                            psi_dot, psi_dot_dot, ...
-                            gamma_dot, gamma_dot_dot, ...
-                            phi, load_factor, T, t_array, ...
-                            past_x, past_y, past_z, ...
-                            x_d, y_d, z_d, ...
-                            num_obs, x_obs, y_obs, z_obs, R_obs);
-            %}
-            break
+        %pause(0.25)
+        %%}
+        if R_obs(end) == 0 % Stop condition for obstacle free scenario
+            if x(end) >= 7000
+                break
+            end
+        else
+            if x(1) >= (x_obs(end) + R_obs(end)*20) || length(x) > 2000
+                %{
+                plot_trajectory(x, y, z, u, v, w, ...
+                                u_dot, v_dot, w_dot, ...
+                                u_dot_dot, v_dot_dot, w_dot_dot, ...
+                                V, V_dot, gamma, psi, ...
+                                psi_dot, psi_dot_dot, ...
+                                gamma_dot, gamma_dot_dot, ...
+                                phi, load_factor, T, t_array, ...
+                                past_x, past_y, past_z, ...
+                                x_d, y_d, z_d, ...
+                                num_obs, x_obs, y_obs, z_obs, R_obs);
+                %}
+                break
+            end
         end
 
         % Define the initial conditions for the next step                                                 
@@ -392,11 +433,16 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
         past_x = [past_x x(1:NUM_TRAV_WAYPOINTS)];
         past_y = [past_y y(1:NUM_TRAV_WAYPOINTS)];
         past_z = [past_z z(1:NUM_TRAV_WAYPOINTS)];
+        past_x_d = [past_x_d x_d(1:NUM_TRAV_WAYPOINTS)];
+        past_y_d = [past_y_d y_d(1:NUM_TRAV_WAYPOINTS)];
+        past_z_d = [past_z_d z_d(1:NUM_TRAV_WAYPOINTS)];
+        past_phi = [past_phi phi(1:NUM_TRAV_WAYPOINTS)];
         past_psi = [past_psi psi(1:NUM_TRAV_WAYPOINTS)];
         past_gamma = [past_gamma gamma(1:NUM_TRAV_WAYPOINTS)];
         past_u = [past_u u(1:NUM_TRAV_WAYPOINTS)];
         past_v = [past_v v(1:NUM_TRAV_WAYPOINTS)];
         past_w = [past_w w(1:NUM_TRAV_WAYPOINTS)];
+        past_T = [past_T T(1:NUM_TRAV_WAYPOINTS)];
 
         % Global trajectory
         % Remove the first points from the global trajectory
@@ -410,14 +456,14 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
         v_g(1:NUM_TRAV_WAYPOINTS) = [];
         w_g(1:NUM_TRAV_WAYPOINTS) = [];
 
-        if length(V_g) < NUM_LOCAL_WAYPOINTS
+        if length(x_g) < NUM_LOCAL_WAYPOINTS
+            x_g(1:NUM_LOCAL_WAYPOINTS) = linspace(x_g(1), x_g(1) + HORIZON_TIME*u_g(1), NUM_LOCAL_WAYPOINTS);
+            y_g(1:NUM_LOCAL_WAYPOINTS) = linspace(y_g(1), y_g(1) + HORIZON_TIME*v_g(1), NUM_LOCAL_WAYPOINTS);
+            z_g(1:NUM_LOCAL_WAYPOINTS) = linspace(z_g(1), z_g(1) + HORIZON_TIME*w_g(1), NUM_LOCAL_WAYPOINTS);
             u_g(1:NUM_LOCAL_WAYPOINTS) = u_g(end);
             v_g(1:NUM_LOCAL_WAYPOINTS) = v_g(end);
             w_g(1:NUM_LOCAL_WAYPOINTS) = w_g(end);
             V_g(1:NUM_LOCAL_WAYPOINTS) = V_g(end);
-            x_g(1:NUM_LOCAL_WAYPOINTS) = linspace(x_g(1), x_g(1) + HORIZON_TIME*u_g(1), NUM_LOCAL_WAYPOINTS);
-            y_g(1:NUM_LOCAL_WAYPOINTS) = linspace(y_g(1), y_g(1) + HORIZON_TIME*v_g(1), NUM_LOCAL_WAYPOINTS);
-            z_g(1:NUM_LOCAL_WAYPOINTS) = linspace(z_g(1), z_g(1) + HORIZON_TIME*w_g(1), NUM_LOCAL_WAYPOINTS);
             psi_g(1:NUM_LOCAL_WAYPOINTS) = psi_g(end);
             gamma_g(1:NUM_LOCAL_WAYPOINTS) = gamma_g(end);
         end 
@@ -437,16 +483,17 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
         x_obs = x_obs + u_obs*(t_array(NUM_TRAV_WAYPOINTS + 1));
         y_obs = y_obs + v_obs*(t_array(NUM_TRAV_WAYPOINTS + 1));
         z_obs = z_obs + w_obs*(t_array(NUM_TRAV_WAYPOINTS + 1));
-
+        
+        counter = counter + 1;
     end
 
-    [energy, convergence, smoothness] = evaluate_hypercube_response(V, T, x, y, z, x_d, y_d, z_d, past_x, past_y, past_z, t_array);
-    fprintf("For LAMBDA_P = %d, LAMBDA_S = %d, LAMBDA_PRF = %d and LAMBDA_T = %d, the energy was %f and the smoothness was %f. Did the trajectory converge into the global trajectory? %s \n", LAMBDA_P, LAMBDA_S, LAMBDA_PRF, LAMBDA_T, energy, smoothness, mat2str(convergence))
-    
+    [energy, convergence, smoothness, negative_T] = evaluate_hypercube_response(V, T, x, y, z, x_d, y_d, z_d, past_x, past_y, past_z, t_array, past_T);
+    fprintf("For LAMBDA_P = %d, LAMBDA_S = %d, LAMBDA_PRF = %d and LAMBDA_T = %d, the energy was %f and the smoothness was %f. Did the trajectory converge into the global trajectory? %s Negative thrust? %s \n", LAMBDA_P, LAMBDA_S, LAMBDA_PRF, LAMBDA_T, energy, smoothness, mat2str(convergence), mat2str(negative_T))
+  
     % lower_bound_constraint = (max(0, 1 - lambdas(1)) + max(0, 1 - lambdas(2)) + max(0, 1 - lambdas(3)) + max(0, 1 - lambdas(4)))^2;
     
     % trajectory_evaluation = -smoothness + 1e10*lower_bound_constraint;
     % trajectory_evaluation = convergence + 1e10*lower_bound_constraint;
     % trajectory_evaluation = energy + 1e10*lower_bound_constraint;
-    trajectory_evaluation = [energy, convergence, smoothness];
+    trajectory_evaluation = [energy, convergence, smoothness, negative_T];
 

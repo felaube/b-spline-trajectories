@@ -75,11 +75,12 @@ for row = 1 : size(PARAMETERS, 1)
         energy = trajectory_evaluation(1);
         convergence = trajectory_evaluation(2); 
         smoothness = trajectory_evaluation(3);
+        negative_T = trajectory_evaluation(4);
          
         if (row == 1 && perm_row == 1)
-            writematrix(["LAMBDA_P" "LAMBDA_S" "LAMBDA_PRF" "LAMBDA_T" "energy" "convergence" "smoothness"], 'response.xls')
+            writematrix(["LAMBDA_P" "LAMBDA_S" "LAMBDA_PRF" "LAMBDA_T" "energy" "convergence" "smoothness" "negative_T"], 'response.xls')
         end
         
-        writematrix([LAMBDA_P LAMBDA_S LAMBDA_PRF LAMBDA_T energy convergence smoothness], 'response.xls', 'WriteMode', 'append')
+        writematrix([LAMBDA_P LAMBDA_S LAMBDA_PRF LAMBDA_T energy convergence smoothness, negative_T], 'response.xls', 'WriteMode', 'append')
     end
 end

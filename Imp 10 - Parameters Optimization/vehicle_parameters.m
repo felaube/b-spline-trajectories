@@ -17,7 +17,7 @@ function [e, S, b, T_max, mass, AR, k, C_D_0, ...
             % Span [m]
             b = 3.9422;
 
-            % Maximum thrust (all operating engines) [N]
+            % Maximum thrust [N]
             T_max = 130;
 
             % Aircraft mass [kg]
@@ -46,9 +46,6 @@ function [e, S, b, T_max, mass, AR, k, C_D_0, ...
             T_min = 1/2*RHO*S*2*C_D_0.*V_min_drag.^2;
 
         case 1 % DECODE 1
-            % Oswald factor [-]
-            e = 0.8;
-
             % Wing area [m²]
             S = 0.966;
 
@@ -56,20 +53,24 @@ function [e, S, b, T_max, mass, AR, k, C_D_0, ...
             b = 2.9483;
 
             % Aircraft mass [kg]
-            mass = 25;
+            mass = 15;
 
-            % Maximum thrust (all operating engines) [N]
+            % Maximum thrust [N]
             T_max = mass*G*0.361;
-
+            
             % Aspect Ratio [-]
             AR = b^2/S;
+            
+            % Oswald factor [-]
+            e = 1.78 * (1 - 0.045 * AR ^ 0.68) - 0.64;
 
             % k value [-]
-            k = 0.0334;
+            k = 1/(pi * AR * e);
 
             % Cd0 value [-]
             % C_D_0 = 0.0715;
             C_D_0 = 0.0143;
+            C_D_0 = 0.0498;
 
             gamma_max = deg2rad(20);
             gamma_min = deg2rad(-20);
