@@ -10,7 +10,8 @@ function plot_trajectory(x, y, z, u, v, w, ...
                          past_u, past_v, past_w, ...
                          past_phi, past_gamma, past_T,...
                          x_d, y_d, z_d, ...
-                         m, x_obs, y_obs, z_obs, R_obs)
+                         m, x_obs, y_obs, z_obs, R_obs, ...
+                         gif_flag)
                      
 	% Plot position, acceleration, jerk, angles, load factor, drag and
     % thrust on each step of the trajectory                                            
@@ -42,7 +43,6 @@ function plot_trajectory(x, y, z, u, v, w, ...
     
     %% Two Dimensional velocities
     
-    
     fig_num = fig_num + 1;
     figure(fig_num)
     subplot(3,1,1);
@@ -70,9 +70,7 @@ function plot_trajectory(x, y, z, u, v, w, ...
     ylabel("V")
     
     
-    
     %% Two Dimensional acceleration
-
     
     fig_num = fig_num + 1;
     figure(fig_num)
@@ -153,6 +151,7 @@ function plot_trajectory(x, y, z, u, v, w, ...
     ylabel("w [m/s]")
     
     %% 3D Trajectory
+    
     % Convert color code to 1-by-3 RGB array (0~1 each)
     str = '#D9FFFF';
     color = sscanf(str(2:end),'%2x%2x%2x',[1 3])/255;
@@ -161,7 +160,7 @@ function plot_trajectory(x, y, z, u, v, w, ...
     prev_color = sscanf(str(2:end),'%2x%2x%2x',[1 3])/255;
     
     fig_num = fig_num + 1;
-    figure(fig_num)
+    fig = figure(fig_num);
     h1 = plot3(x, y, z, '-o','Color','b','MarkerSize',10, 'MarkerFaceColor', color, 'DisplayName', 'Trajetória local otimizada');
     hold on
     h2 = plot3(past_x, past_y, past_z,'-o','Color','r','MarkerSize',10, 'MarkerFaceColor', prev_color, 'DisplayName', 'Trajetória já percorrida');
@@ -176,6 +175,20 @@ function plot_trajectory(x, y, z, u, v, w, ...
     zlabel("z [m]")
     % view(-101.9, 1.2) % Different point of view
     hold off
+    
+    if gif_flag
+        frame = getframe(fig); 
+        image = frame2im(frame); 
+        [indexed_image, color_map] = rgb2ind(image, 256); 
+
+        filename = "figs/trajectory.gif";
+
+        if x(1) == 0
+              imwrite(indexed_image, color_map, filename, 'gif', 'Loopcount', inf); 
+          else 
+              imwrite(indexed_image, color_map, filename, 'gif', 'WriteMode', 'append'); 
+        end 
+    end
     
     %% Performance and Control Limits 
     

@@ -8,9 +8,11 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
     if nargin < 1
         % Set default lambdas values
         lambdas = [9, 10, 7, 6];
-        
     end
-        
+    
+    % Choose whether or not a gif of the trajectory will be created
+    CREATE_GIF = true;
+    
     LAMBDA_P = lambdas(1); % position
     LAMBDA_S = lambdas(2); % speed
     LAMBDA_LIM = lambdas(3); % vehicle contraints (limits)
@@ -193,11 +195,6 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
     past_w = [];
     past_T = [];
     
-    % Initialize variables used to store the objective function value
-    % and the optmization results
-    optim_vars = cell(3, 28);
-    cost_val(1:28) = Inf;
-    
     while true
 
         C_u(1) = u_0;
@@ -268,7 +265,7 @@ function trajectory_evaluation = trajectory_optimization(lambdas, opts)
                         past_u, past_v, past_w, ...
                         past_phi, past_gamma, past_T, ...
                         x_d, y_d, z_d, ...
-                        num_obs, x_obs, y_obs, z_obs, R_obs);
+                        num_obs, x_obs, y_obs, z_obs, R_obs, CREATE_GIF);
         
         % Uncomment line below to add a delay to the optimization
         % pause(0.25)
